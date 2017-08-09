@@ -1,26 +1,45 @@
-class Bottles
+class Integer
+  def to_bottle_number
+    BottleNumber.for(self)
+  end
+end
 
+
+#############################
+class Bottles
   def song
     verses(99, 0)
   end
 
   def verses(upper, lower)
-    upper.downto(lower).map { |i| verse(i) }.join("\n")
+    upper.downto(lower).map {|i| verse(i)}.join("\n")
   end
 
   def verse(number)
-    bottle_number = BottleNumber.new(number)
-    successor_bottle_number = BottleNumber.new(bottle_number.successor)
+    bn  = BottleNumber.for(number)
 
-    "#{bottle_number} of beer on the wall, ".capitalize +
-    "#{bottle_number} of beer.\n" +
-    "#{bottle_number.action}, " +
-    "#{successor_bottle_number} of beer on the wall.\n"
+    "#{bn} of beer on the wall, ".capitalize +
+    "#{bn} of beer.\n" +
+    "#{bn.action}, " +
+    "#{bn.successor} of beer on the wall.\n"
   end
 end
 
 
+#############################
 class BottleNumber
+
+  def self.for(number)
+    case number
+    when 0
+      BottleNumber0
+    when 1
+      BottleNumber1
+    else
+      BottleNumber
+    end.new(number)
+  end
+
   attr_reader :number
 
   def initialize(number)
@@ -31,43 +50,48 @@ class BottleNumber
     "#{quantity} #{container}"
   end
 
-  def quantity
-    if number == 0
-      "no more"
-    else
-      number.to_s
-    end
-  end
-
   def container
-    if number == 1
-      "bottle"
-    else
-      "bottles"
-    end
-  end
-
-  def action
-    if number == 0
-      "Go to the store and buy some more"
-    else
-      "Take #{pronoun} down and pass it around"
-    end
+    "bottles"
   end
 
   def pronoun
-    if number == 1
-      "it"
-    else
-      "one"
-    end
+    "one"
+  end
+
+  def quantity
+    number.to_s
+  end
+
+  def action
+    "Take #{pronoun} down and pass it around"
   end
 
   def successor
-    if number == 0
-      99
-    else
-      number - 1
-    end
+    (number - 1).to_bottle_number
+  end
+end
+
+
+class BottleNumber0 < BottleNumber
+  def quantity
+    "no more"
+  end
+
+  def action
+    "Go to the store and buy some more"
+  end
+
+  def successor
+    99.to_bottle_number
+  end
+end
+
+class BottleNumber1 < BottleNumber
+  def container
+    "bottle"
+  end
+
+  def pronoun
+    "it"
   end
 end
