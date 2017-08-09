@@ -1,14 +1,34 @@
-class Bottles
+class DescendingVerseSong
+  attr_reader :upper, :lower, :verse
+
+  def initialize(verse: BottleVerse, upper: 99, lower: 0)
+    @verse = verse
+    @upper = upper
+    @lower = lower
+  end
 
   def song
-    verses(99, 0)
+    verses(upper, lower)
   end
 
   def verses(upper, lower)
-    upper.downto(lower).map { |i| verse(i) }.join("\n")
+    upper.downto(lower).map { |i| verse.lyrics(i) }.join("\n")
+  end
+end
+
+
+class BottleVerse
+  attr_reader :number
+
+  def self.lyrics(number)
+    new(number).lyrics
   end
 
-  def verse(number)
+  def initialize(number)
+    @number = number
+  end
+
+  def lyrics
     bottle_number = BottleNumber.for(number)
 
     "#{bottle_number} of beer on the wall, ".capitalize +
